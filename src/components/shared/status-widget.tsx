@@ -28,8 +28,6 @@ interface HealthData {
   }
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api-project-gules.vercel.app"
-
 export function StatusWidget() {
   const [health, setHealth] = useState<HealthData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -41,7 +39,8 @@ export function StatusWidget() {
     setError(null)
 
     try {
-      const response = await fetch(`${API_URL}/api/health`, {
+      // Use local API route to avoid CORS issues
+      const response = await fetch("/api/health", {
         cache: "no-store",
       })
 
