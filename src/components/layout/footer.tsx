@@ -24,7 +24,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/30">
       <Container>
-        <div className="py-12 md:py-16">
+        <div className="py-16 md:py-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
@@ -42,7 +42,7 @@ export function Footer() {
             {/* Produto */}
             <div>
               <h3 className="font-semibold mb-3">Produto</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {footerLinks.produto.map((link) => (
                   <li key={link.name}>
                     <Link
@@ -59,7 +59,7 @@ export function Footer() {
             {/* Developers */}
             <div>
               <h3 className="font-semibold mb-3">Developers</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {footerLinks.developers.map((link) => (
                   <li key={link.name}>
                     <Link
@@ -79,7 +79,7 @@ export function Footer() {
             {/* Empresa */}
             <div>
               <h3 className="font-semibold mb-3">Empresa</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {footerLinks.empresa.map((link) => (
                   <li key={link.name}>
                     <Link

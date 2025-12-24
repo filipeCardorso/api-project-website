@@ -5,9 +5,18 @@ import { Container } from "@/components/layout/container"
 import { Card, CardContent } from "@/components/ui/card"
 import { features } from "@/data/features"
 
+const iconColors = [
+  "primary",
+  "purple-500",
+  "green-500",
+  "orange-500",
+  "pink-500",
+  "cyan-500"
+]
+
 export function FeatureGrid() {
   return (
-    <section id="features" className="py-20 md:py-28 bg-muted/30">
+    <section id="features" className="py-24 md:py-32 bg-muted/30">
       <Container>
         <motion.div
           className="text-center mb-16"
@@ -24,28 +33,34 @@ export function FeatureGrid() {
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Card className="h-full hover:shadow-md transition-shadow">
-                <CardContent className="pt-6">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, index) => {
+            const colorClass = iconColors[index % iconColors.length]
+            const bgColor = colorClass === "primary" ? "bg-primary/10" : `bg-${colorClass}/10`
+            const textColor = colorClass === "primary" ? "text-primary" : `text-${colorClass}`
+
+            return (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card className="h-full hover:shadow-lg hover:border-primary/20 transition-all duration-200">
+                  <CardContent className="pt-6">
+                    <div className={`w-14 h-14 rounded-lg ${bgColor} flex items-center justify-center mb-4`}>
+                      <feature.icon className={`h-6 w-6 ${textColor}`} />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground text-sm">
+                      {feature.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )
+          })}
         </div>
       </Container>
     </section>

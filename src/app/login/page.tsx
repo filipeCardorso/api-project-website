@@ -22,20 +22,20 @@ export default function LoginPage() {
     <div className="pt-32 pb-20 min-h-screen flex items-center">
       <Container>
         <div className="max-w-md mx-auto">
-          <Card>
-            <CardHeader className="text-center">
-              <div className="w-12 h-12 bg-primary rounded-md flex items-center justify-center mx-auto mb-4">
-                <span className="text-primary-foreground font-bold">AP</span>
+          <Card className="shadow-xl border-border/50 backdrop-blur-sm">
+            <CardHeader className="text-center space-y-3 pb-8">
+              <div className="w-14 h-14 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-lg shadow-primary/20 transition-transform hover:scale-105">
+                <span className="text-primary-foreground font-bold text-lg">AP</span>
               </div>
-              <CardTitle className="text-2xl">Entrar na sua conta</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-3xl font-semibold tracking-tight">Entrar na sua conta</CardTitle>
+              <CardDescription className="text-base">
                 Digite suas credenciais para acessar o dashboard
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+            <CardContent className="pt-0">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium">
+                  <label htmlFor="email" className="text-sm font-semibold text-foreground">
                     Email
                   </label>
                   <Input
@@ -45,17 +45,18 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    className="h-11 transition-all duration-200 focus:ring-4 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="text-sm font-medium">
+                    <label htmlFor="password" className="text-sm font-semibold text-foreground">
                       Senha
                     </label>
                     <Link
                       href="#"
-                      className="text-sm text-primary hover:underline"
+                      className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
                     >
                       Esqueceu a senha?
                     </Link>
@@ -68,11 +69,12 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      className="h-11 transition-all duration-200 focus:ring-4 focus:ring-primary/20 focus:border-primary pr-10"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors duration-200"
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />
@@ -83,17 +85,20 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button
+                  type="submit"
+                  className="w-full h-11 mt-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 shadow-lg shadow-primary/25 transition-all duration-200 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 font-semibold"
+                >
                   Entrar
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </form>
 
-              <div className="mt-6 text-center text-sm">
+              <div className="mt-8 text-center text-sm">
                 <span className="text-muted-foreground">
                   Nao tem uma conta?{" "}
                 </span>
-                <Link href="/signup" className="text-primary hover:underline">
+                <Link href="/signup" className="text-primary hover:text-primary/80 transition-colors font-semibold">
                   Criar conta gratis
                 </Link>
               </div>

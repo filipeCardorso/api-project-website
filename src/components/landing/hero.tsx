@@ -8,7 +8,12 @@ import { Container } from "@/components/layout/container"
 
 export function Hero() {
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-24">
+    <section className="relative pt-32 pb-16 md:pt-40 md:pb-24">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/20 via-primary/5 to-transparent blur-3xl" />
+      </div>
+
       <Container>
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
@@ -16,6 +21,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="animate-pulse"
           >
             <Link
               href="/changelog"
@@ -32,7 +38,7 @@ export function Hero() {
 
           {/* Headline */}
           <motion.h1
-            className="mt-6 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight"
+            className="mt-6 text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -43,7 +49,7 @@ export function Hero() {
 
           {/* Subheadline */}
           <motion.p
-            className="mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto"
+            className="mt-8 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -82,7 +88,7 @@ export function Hero() {
           >
             <div className="relative mx-auto max-w-3xl">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/5 blur-3xl -z-10" />
-              <div className="bg-card border border-border rounded-xl shadow-2xl overflow-hidden">
+              <div className="bg-card border border-border rounded-xl shadow-2xl overflow-hidden dark:shadow-[0_0_50px_-12px_rgba(var(--primary),0.3)]">
                 {/* Terminal header */}
                 <div className="flex items-center gap-2 px-4 py-3 bg-muted/50 border-b border-border">
                   <div className="flex gap-1.5">

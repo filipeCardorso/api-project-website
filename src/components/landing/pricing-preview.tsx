@@ -12,7 +12,7 @@ import { formatCurrency } from "@/lib/utils"
 
 export function PricingPreview() {
   return (
-    <section className="py-20 md:py-28 bg-muted/30">
+    <section className="py-24 md:py-32 bg-muted/30">
       <Container>
         <motion.div
           className="text-center mb-16"
@@ -39,13 +39,15 @@ export function PricingPreview() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <Card
-                className={`relative h-full flex flex-col ${
-                  plan.popular ? "border-primary shadow-lg scale-105" : ""
+                className={`relative h-full flex flex-col transition-shadow duration-300 ${
+                  plan.popular
+                    ? "border-primary shadow-lg scale-105 ring-2 ring-primary/20 dark:shadow-primary/20 dark:shadow-2xl hover:shadow-xl dark:hover:shadow-primary/30"
+                    : "hover:shadow-lg"
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="px-3">Mais escolhido</Badge>
+                    <Badge variant="gradient" className="px-3">Mais escolhido</Badge>
                   </div>
                 )}
 
@@ -83,7 +85,11 @@ export function PricingPreview() {
 
                 <CardFooter>
                   <Button
-                    className="w-full"
+                    className={`w-full ${
+                      plan.popular
+                        ? "bg-gradient-to-r from-primary via-primary to-primary/80 hover:from-primary/90 hover:via-primary/90 hover:to-primary/70"
+                        : ""
+                    }`}
                     variant={plan.popular ? "default" : "outline"}
                     asChild
                   >
