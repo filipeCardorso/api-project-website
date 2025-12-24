@@ -1,40 +1,36 @@
 "use client"
 
 import { Moon, Sun } from "lucide-react"
-import { useContext, useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "./ui/button"
-
-// Import the context directly to avoid the hook that throws
-import { createContext } from "react"
 
 type Theme = "light" | "dark"
 
-interface ThemeContextType {
-  theme: Theme
-  toggleTheme: () => void
-  setTheme: (theme: Theme) => void
-}
-
-// We need to access this from a shared location
-// Let's use a simpler approach with local state and direct DOM manipulation
-
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light")
   const [mounted, setMounted] = useState(false)
+  const [theme, setThemeState] = useState<Theme>("light")
+  const initialized = useRef(false)
 
   useEffect(() => {
-    setMounted(true)
-    // Check if dark class is present
+    if (initialized.current) return
+    initialized.current = true
+
     const isDark = document.documentElement.classList.contains("dark")
-    setTheme(isDark ? "dark" : "light")
+
+    // SSR hydration requires setState in effect - this is the standard pattern
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setThemeState(isDark ? "dark" : "light")
+    setMounted(true)
   }, [])
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light"
-    setTheme(newTheme)
-    localStorage.setItem("theme", newTheme)
-    document.documentElement.classList.toggle("dark", newTheme === "dark")
-  }
+  const toggleTheme = useCallback(() => {
+    setThemeState((prev) => {
+      const newTheme = prev === "light" ? "dark" : "light"
+      localStorage.setItem("theme", newTheme)
+      document.documentElement.classList.toggle("dark", newTheme === "dark")
+      return newTheme
+    })
+  }, [])
 
   // Don't render anything until mounted to avoid hydration mismatch
   if (!mounted) {

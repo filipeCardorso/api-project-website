@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState, useRef } from "react"
 
 type Theme = "light" | "dark"
 
@@ -12,25 +12,31 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+function getInitialTheme(): Theme {
+  if (typeof window === "undefined") return "light"
+
+  const stored = localStorage.getItem("theme") as Theme | null
+  if (stored) return stored
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light")
   const [mounted, setMounted] = useState(false)
+  const initialized = useRef(false)
 
   useEffect(() => {
+    if (initialized.current) return
+    initialized.current = true
+
+    const initialTheme = getInitialTheme()
+    document.documentElement.classList.toggle("dark", initialTheme === "dark")
+
+    // SSR hydration requires setState in effect - this is the standard pattern
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setThemeState(initialTheme)
     setMounted(true)
-    // Check localStorage first
-    const stored = localStorage.getItem("theme") as Theme | null
-    if (stored) {
-      setThemeState(stored)
-      document.documentElement.classList.toggle("dark", stored === "dark")
-    } else {
-      // Check system preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      if (prefersDark) {
-        setThemeState("dark")
-        document.documentElement.classList.add("dark")
-      }
-    }
   }, [])
 
   const setTheme = (newTheme: Theme) => {

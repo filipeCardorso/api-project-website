@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Container } from "@/components/layout/container"
 import { StatusWidget } from "@/components/shared/status-widget"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 export const metadata: Metadata = {

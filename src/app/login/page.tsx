@@ -16,7 +16,6 @@ export default function LoginPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // UI only - no backend integration
-    console.log("Login attempt:", { email, password })
   }
 
   return (

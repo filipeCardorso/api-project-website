@@ -11,8 +11,6 @@ export function DevSnippetsTabs() {
   const [activeEndpoint, setActiveEndpoint] = useState(endpoints[0].name)
   const [activeLanguage, setActiveLanguage] = useState("curl")
 
-  const currentEndpoint = endpoints.find((e) => e.name === activeEndpoint)
-
   return (
     <section className="py-20 md:py-28">
       <Container>
