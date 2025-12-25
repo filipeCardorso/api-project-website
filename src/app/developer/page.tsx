@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CodeBlock } from "@/components/shared/code-block"
 import { endpoints, apiEndpointsList } from "@/data/snippets"
 
 export const metadata: Metadata = {
@@ -140,11 +141,10 @@ export default function DeveloperPage() {
                           key={snippet.language}
                           value={snippet.language}
                         >
-                          <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                            <code className="text-sm font-mono">
-                              {snippet.code}
-                            </code>
-                          </pre>
+                          <CodeBlock
+                            code={snippet.code}
+                            language={snippet.label}
+                          />
                         </TabsContent>
                       ))}
                     </Tabs>
