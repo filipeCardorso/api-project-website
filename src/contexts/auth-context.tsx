@@ -27,16 +27,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check if user is logged in (check localStorage for token)
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
         const token = localStorage.getItem("token")
         if (token) {
-          // In a real app, validate token with API
-          // For now, just mock a user
           const storedUser = localStorage.getItem("user")
           if (storedUser) {
             setUser(JSON.parse(storedUser))
           }
+        } else {
+          setUser(null)
         }
       } catch (error) {
         console.error("Auth check failed:", error)
@@ -46,6 +46,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     checkAuth()
+
+    // Listen for storage changes from other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "token" || e.key === "user") {
+        checkAuth()
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange)
+    return () => window.removeEventListener("storage", handleStorageChange)
   }, [])
 
   const login = async (email: string, _password: string) => {
