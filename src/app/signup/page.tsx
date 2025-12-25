@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Eye, EyeOff, ArrowRight, Check } from "lucide-react"
 import { Container } from "@/components/layout/container"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { useAuth } from "@/contexts/auth-context"
 
 const passwordRequirements = [
   { label: "Minimo 8 caracteres", test: (p: string) => p.length >= 8 },
@@ -16,14 +18,55 @@ const passwordRequirements = [
 ]
 
 export default function SignupPage() {
+  const router = useRouter()
+  const auth = useAuth()
+
   const [showPassword, setShowPassword] = useState(false)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (auth.isAuthenticated && !auth.isLoading) {
+      router.push("/dashboard")
+    }
+  }, [auth.isAuthenticated, auth.isLoading, router])
+
+  const validatePassword = () => {
+    return passwordRequirements.every((req) => req.test(password))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // UI only - no backend integration
+    setError("")
+    setSuccess(false)
+
+    // Validate all password requirements
+    if (!validatePassword()) {
+      setError("A senha não atende aos requisitos mínimos")
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      await auth.register(name, email, password)
+      setSuccess(true)
+
+      // Redirect to login after 3 seconds
+      setTimeout(() => {
+        router.push("/login")
+      }, 3000)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro ao criar conta"
+      setError(errorMessage)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -41,6 +84,22 @@ export default function SignupPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Error message */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+                  <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                </div>
+              )}
+
+              {/* Success message */}
+              {success && (
+                <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+                  <p className="text-sm text-green-600 dark:text-green-400">
+                    Conta criada! Verifique seu email para ativar.
+                  </p>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <label htmlFor="name" className="text-sm font-medium text-foreground">
@@ -123,9 +182,13 @@ export default function SignupPage() {
                   )}
                 </div>
 
-                <Button type="submit" className="w-full mt-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all">
-                  Criar conta
-                  <ArrowRight className="h-4 w-4 ml-2" />
+                <Button
+                  type="submit"
+                  className="w-full mt-6 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg transition-all"
+                  disabled={isLoading || success}
+                >
+                  {isLoading ? "Criando conta..." : success ? "Conta criada!" : "Criar conta"}
+                  {!isLoading && !success && <ArrowRight className="h-4 w-4 ml-2" />}
                 </Button>
               </form>
 

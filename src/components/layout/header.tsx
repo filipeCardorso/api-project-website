@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Menu } from "lucide-react"
+import { Menu, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Container } from "./container"
 import { MobileNav } from "./mobile-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/contexts/auth-context"
 
 const navigation = [
   { name: "Produto", href: "/#features" },
@@ -18,6 +19,7 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, isLoading, logout } = useAuth()
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
@@ -48,12 +50,42 @@ export function Header() {
           {/* Desktop CTAs */}
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">Entrar</Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link href="/signup">Comecar gratis</Link>
-            </Button>
+            {!isLoading && (
+              <>
+                {user ? (
+                  <>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/dashboard" className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">
+                          <span className="text-primary-foreground text-xs font-semibold">
+                            {user.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="hidden lg:inline">{user.name}</span>
+                      </Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={logout}
+                      className="flex items-center gap-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span className="hidden lg:inline">Sair</span>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/login">Entrar</Link>
+                    </Button>
+                    <Button size="sm" asChild>
+                      <Link href="/signup">Comecar gratis</Link>
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
