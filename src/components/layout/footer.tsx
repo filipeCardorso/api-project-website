@@ -1,5 +1,8 @@
+"use client"
+
 import Link from "next/link"
 import { Container } from "./container"
+import { CookieSettingsButton } from "@/components/cookie-consent"
 
 const footerLinks = {
   produto: [
@@ -13,10 +16,10 @@ const footerLinks = {
     { name: "Swagger UI", href: "https://api-project-gules.vercel.app/docs", external: true },
     { name: "API Reference", href: "/developer#endpoints" },
   ],
-  empresa: [
+  legal: [
     { name: "Seguranca", href: "/security" },
-    { name: "Termos de Uso", href: "#" },
-    { name: "Privacidade", href: "#" },
+    { name: "Politica de Privacidade", href: "/privacy-policy" },
+    { name: "Politica de Cookies", href: "/cookie-policy" },
   ],
 }
 
@@ -76,11 +79,11 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Empresa */}
+            {/* Legal */}
             <div>
-              <h3 className="font-semibold mb-3">Empresa</h3>
+              <h3 className="font-semibold mb-3">Legal</h3>
               <ul className="space-y-3">
-                {footerLinks.empresa.map((link) => (
+                {footerLinks.legal.map((link) => (
                   <li key={link.name}>
                     <Link
                       href={link.href}
@@ -90,6 +93,9 @@ export function Footer() {
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <CookieSettingsButton />
+                </li>
               </ul>
             </div>
           </div>

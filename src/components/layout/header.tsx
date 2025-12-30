@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Menu, LogOut } from "lucide-react"
+import { Menu, LogOut, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Container } from "./container"
 import { MobileNav } from "./mobile-nav"
@@ -19,7 +19,7 @@ const navigation = [
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { user, isLoading, logout } = useAuth()
+  const { user, isLoading, logout, isAdmin } = useAuth()
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
@@ -54,6 +54,14 @@ export function Header() {
               <>
                 {user ? (
                   <>
+                    {isAdmin && (
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href="/admin" className="flex items-center gap-2 text-primary">
+                          <Shield className="h-4 w-4" />
+                          <span className="hidden lg:inline">Admin</span>
+                        </Link>
+                      </Button>
+                    )}
                     <Button variant="ghost" size="sm" asChild>
                       <Link href="/dashboard" className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center">

@@ -6,24 +6,34 @@ interface User {
   id: string
   name: string
   email: string
+  role: "user" | "admin" | "super_admin"
 }
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
+  isAdmin: boolean
+  isSuperAdmin: boolean
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
+  getToken: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api-project-gules.vercel.app"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const isAuthenticated = !!user
+  const isSuperAdmin = user?.role === "super_admin"
+  const isAdmin = user?.role === "admin" || user?.role === "super_admin"
+
+  const getToken = () => localStorage.getItem("token")
 
   useEffect(() => {
     // Check if user is logged in (check localStorage for token)
@@ -33,13 +43,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (token) {
           const storedUser = localStorage.getItem("user")
           if (storedUser) {
-            setUser(JSON.parse(storedUser))
+            const parsed = JSON.parse(storedUser)
+            // Ensure role exists, default to "user"
+            setUser({
+              ...parsed,
+              role: parsed.role || "user",
+            })
           }
         } else {
           setUser(null)
         }
       } catch (error) {
         console.error("Auth check failed:", error)
+        setUser(null)
       } finally {
         setIsLoading(false)
       }
@@ -58,22 +74,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", handleStorageChange)
   }, [])
 
-  const login = async (email: string, _password: string) => {
-    // Mock login - in real app, call API with password
+  const login = async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
 
-      const mockUser = {
-        id: "1",
-        name: email.split("@")[0],
-        email,
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Credenciais inválidas")
       }
 
-      setUser(mockUser)
-      localStorage.setItem("token", "mock-token")
-      localStorage.setItem("user", JSON.stringify(mockUser))
+      const data = await response.json()
+
+      const loggedUser: User = {
+        id: String(data.user.id),
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role || "user",
+      }
+
+      setUser(loggedUser)
+      localStorage.setItem("token", data.accessToken)
+      localStorage.setItem("refreshToken", data.refreshToken)
+      localStorage.setItem("user", JSON.stringify(loggedUser))
+    } catch (error) {
+      console.error("Login error:", error)
+      throw error
     } finally {
       setIsLoading(false)
     }
@@ -82,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true)
     try {
-      const response = await fetch("https://api-project-gules.vercel.app/api/auth/register", {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,15 +129,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json()
 
-      // Store user data and token
-      const newUser = {
-        id: data.user.id,
+      // Store user data
+      const newUser: User = {
+        id: String(data.user.id),
         name: data.user.name,
         email: data.user.email,
+        role: data.user.role || "user",
       }
 
       setUser(newUser)
-      localStorage.setItem("token", data.accessToken)
+      if (data.accessToken) {
+        localStorage.setItem("token", data.accessToken)
+        localStorage.setItem("refreshToken", data.refreshToken || "")
+      }
       localStorage.setItem("user", JSON.stringify(newUser))
     } catch (error) {
       console.error("Registration error:", error)
@@ -118,11 +154,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null)
     localStorage.removeItem("token")
+    localStorage.removeItem("refreshToken")
     localStorage.removeItem("user")
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated, login, register, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      isLoading,
+      isAuthenticated,
+      isAdmin,
+      isSuperAdmin,
+      login,
+      register,
+      logout,
+      getToken
+    }}>
       {children}
     </AuthContext.Provider>
   )
